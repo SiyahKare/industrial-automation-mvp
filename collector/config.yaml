@@ -1,0 +1,57 @@
+opcua:
+  endpoint: opc.tcp://127.0.0.1:4840
+  sensors:
+  - tag: Area1/Temp_01
+    unit: °C
+    nodeId: ns=2;s=Device1.Temperature1
+    type: temperature
+    min: 18.0
+    max: 95.0
+  - tag: Area1/Temp_02
+    unit: °C
+    nodeId: ns=2;s=Device1.Temperature2
+    type: temperature
+    min: 18.0
+    max: 95.0
+  - tag: Area2/Temp_03
+    unit: °C
+    nodeId: ns=3;s=LineA.Sensor.Temp3
+    type: temperature
+    min: 18.0
+    max: 95.0
+  - tag: Area1/Press_01
+    unit: bar
+    nodeId: ns=2;s=Device1.Pressure1
+    type: pressure
+    min: 0.8
+    max: 12.0
+  - tag: Area2/Press_02
+    unit: bar
+    nodeId: ns=3;s=LineA.Sensor.Press2
+    type: pressure
+    min: 0.8
+    max: 12.0
+  - tag: Area3/Press_03
+    unit: bar
+    nodeId: ns=4;s=Boiler.Pressure3
+    type: pressure
+    min: 0.8
+    max: 12.0
+  - tag: Area1/Flow_01
+    unit: m3/h
+    nodeId: ns=2;s=Device1.Flow1
+    type: flow
+    min: 0.0
+    max: 50.0
+  - tag: Area2/Flow_02
+    unit: m3/h
+    nodeId: ns=3;s=LineA.Sensor.Flow2
+    type: flow
+    min: 0.0
+    max: 50.0
+  - tag: Area3/Flow_03
+    unit: m3/h
+    nodeId: ns=4;s=Water.Flow3
+    type: flow
+    min: 0.0
+    max: 50.0

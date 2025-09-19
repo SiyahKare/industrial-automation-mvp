@@ -1,0 +1,21 @@
+{
+  "name": "@industrial/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@tanstack/react-query": "^5.89.0",
+    "reactflow": "^11.11.4",
+    "zustand": "^5.0.8",
+    "zod": "^4.1.9",
+    "@industrial/graph": "*",
+    "@industrial/sdk": "*"
+  }
+}

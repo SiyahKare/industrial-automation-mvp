@@ -1,0 +1,71 @@
+
+services:
+  tsdb:
+    image: timescale/timescaledb-ha:pg16
+    environment:
+      - POSTGRES_USER=tsdb
+      - POSTGRES_PASSWORD=tsdb
+      - POSTGRES_DB=tsdb
+    ports: ["5433:5432"]
+    volumes:
+      - tsdb-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tsdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [appnet]
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    ports: ["1883:1883"]
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks: [appnet]
+
+  api:
+    build: ./api
+    environment:
+      - DATABASE_URL=postgresql://tsdb:tsdb@tsdb:5432/tsdb
+    depends_on:
+      - tsdb
+    ports: ["8000:8000"]
+    networks: [appnet]
+
+  collector:
+    build: ./collector
+    environment:
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    depends_on:
+      - mqtt
+    networks: [appnet]
+
+  seeder:
+    build:
+      context: .
+      dockerfile: tools/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://tsdb:tsdb@tsdb:5432/tsdb
+      - CONFIG_PATH=/app/collector_config.yaml
+      - SAMPLES_PER_SENSOR=1000
+    depends_on:
+      tsdb:
+        condition: service_healthy
+    networks: [appnet]
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    ports: ["3000:3000"]
+    networks: [appnet]
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  tsdb-data:
+  grafana-data:
+
+networks:
+  appnet:
+    driver: bridge
