@@ -32,7 +32,7 @@
 
 ---
 
-## 📂 Proje Yapısı
+## 📂 Proje Yapısı (Monorepo)
 
 ```
 industrial-automation-mvp/
@@ -41,7 +41,13 @@ industrial-automation-mvp/
 ├─ db/               # TimescaleDB şema dosyaları
 ├─ infra/            # Mosquitto (MQTT) ayarları
 ├─ tools/            # Seeder (NodeId haritasından 1000 sample ekler)
-├─ ui/               # Flutter paneli (web + mobil)
+├─ apps/
+│  ├─ web/           # Next.js + React Flow editor (yeni)
+│  └─ mobile/        # ⏳ Expo/React Native (gelecek)
+├─ packages/
+│  ├─ graph/         # Graph/Node/Edge tipleri (zod)
+│  └─ sdk/           # Paylaşılan TS API/WS istemcisi
+├─ ui/               # Flutter paneli (eski, arşiv)
 └─ docker-compose.yml
 ```
 
@@ -79,7 +85,23 @@ curl http://localhost:8000/health
 curl http://localhost:8000/api/sensors
 ```
 
-### 5. Flutter UI çalıştır
+### 5. Web Editor'ü çalıştır
+
+```bash
+# Web uygulamasını başlat
+cd apps/web
+npm install
+npm run dev
+```
+
+**Web Editor**: http://localhost:3001/editor
+- React Flow ile görsel graph editörü
+- Custom node'lar: Sensor, Constant, Output
+- Properties panel ile node düzenleme
+- Save/Activate pipeline özellikleri
+- Real-time data flow
+
+### 6. Flutter UI (eski, arşiv)
 
 ```bash
 cd ui

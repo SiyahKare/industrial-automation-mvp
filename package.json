@@ -14,5 +14,9 @@
   },
   "engines": {
     "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "reactflow": "^11.11.4",
+    "zustand": "^5.0.8"
   }
 }
