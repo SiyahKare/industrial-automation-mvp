@@ -59,13 +59,8 @@ export declare const GraphNode: z.ZodObject<{
     }>, "many">>;
     config: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
 }, "strip", z.ZodTypeAny, {
-    type: "sensor" | "actuator" | "logic" | "ui";
-    id: string;
     label: string;
-    position: {
-        x: number;
-        y: number;
-    };
+    type: "sensor" | "actuator" | "logic" | "ui";
     inputs: {
         id: string;
         kind: "input" | "output";
@@ -76,11 +71,16 @@ export declare const GraphNode: z.ZodObject<{
         kind: "input" | "output";
         dataType: "string" | "number" | "boolean";
     }[];
+    id: string;
+    position: {
+        x: number;
+        y: number;
+    };
     config?: Record<string, any> | undefined;
 }, {
+    label: string;
     type: "sensor" | "actuator" | "logic" | "ui";
     id: string;
-    label: string;
     position: {
         x: number;
         y: number;
@@ -161,13 +161,8 @@ export declare const Graph: z.ZodObject<{
         }>, "many">>;
         config: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
     }, "strip", z.ZodTypeAny, {
-        type: "sensor" | "actuator" | "logic" | "ui";
-        id: string;
         label: string;
-        position: {
-            x: number;
-            y: number;
-        };
+        type: "sensor" | "actuator" | "logic" | "ui";
         inputs: {
             id: string;
             kind: "input" | "output";
@@ -178,11 +173,16 @@ export declare const Graph: z.ZodObject<{
             kind: "input" | "output";
             dataType: "string" | "number" | "boolean";
         }[];
+        id: string;
+        position: {
+            x: number;
+            y: number;
+        };
         config?: Record<string, any> | undefined;
     }, {
+        label: string;
         type: "sensor" | "actuator" | "logic" | "ui";
         id: string;
-        label: string;
         position: {
             x: number;
             y: number;
@@ -221,13 +221,8 @@ export declare const Graph: z.ZodObject<{
     version: z.ZodLiteral<1>;
 }, "strip", z.ZodTypeAny, {
     nodes: {
-        type: "sensor" | "actuator" | "logic" | "ui";
-        id: string;
         label: string;
-        position: {
-            x: number;
-            y: number;
-        };
+        type: "sensor" | "actuator" | "logic" | "ui";
         inputs: {
             id: string;
             kind: "input" | "output";
@@ -238,6 +233,11 @@ export declare const Graph: z.ZodObject<{
             kind: "input" | "output";
             dataType: "string" | "number" | "boolean";
         }[];
+        id: string;
+        position: {
+            x: number;
+            y: number;
+        };
         config?: Record<string, any> | undefined;
     }[];
     edges: {
@@ -250,9 +250,9 @@ export declare const Graph: z.ZodObject<{
     version: 1;
 }, {
     nodes: {
+        label: string;
         type: "sensor" | "actuator" | "logic" | "ui";
         id: string;
-        label: string;
         position: {
             x: number;
             y: number;
@@ -280,3 +280,4 @@ export declare const Graph: z.ZodObject<{
 }>;
 export type Graph = z.infer<typeof Graph>;
 export declare function createEmptyGraph(): Graph;
+export * from './nodespec';

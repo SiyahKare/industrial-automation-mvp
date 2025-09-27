@@ -1,14 +1,7 @@
-export async function PUT(_req: Request, context: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await context.params;
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/pipelines/${id}/activate`, {
-      method: 'PUT'
-    });
-
-    // Passthrough response (body + status + headers)
-    const text = await response.text();
-    return new Response(text, { status: response.status, headers: response.headers });
-  } catch (_error) {
-    return Response.json({ error: 'Failed to activate pipeline' }, { status: 500 });
-  }
+export async function PUT(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const { id } = await ctx.params;
+  const r = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/pipelines/${id}/activate`, {
+    method: "PUT",
+  });
+  return new Response(await r.text(), { status: r.status, headers: r.headers });
 }

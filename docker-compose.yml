@@ -29,7 +29,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://tsdb:tsdb@tsdb:5432/tsdb
     depends_on:
-      - tsdb
+      tsdb:
+        condition: service_healthy
     ports: ["8000:8000"]
     networks: [appnet]
 

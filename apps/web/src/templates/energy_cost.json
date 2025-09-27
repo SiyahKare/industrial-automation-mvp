@@ -1,0 +1,18 @@
+{
+  "name": "Elektrik + Su Maliyeti",
+  "nodes": [
+    { "id": "n1", "type": "sensor", "position": { "x": 40, "y": 80 }, "data": { "label": "Power" } },
+    { "id": "n2", "type": "tariff", "position": { "x": 260, "y": 80 }, "data": { "label": "Tariff" } },
+    { "id": "n3", "type": "out", "position": { "x": 520, "y": 80 }, "data": { "label": "Cost" } }
+  ],
+  "edges": [
+    { "id": "e1", "source": "n1", "target": "n2" },
+    { "id": "e2", "source": "n2", "target": "n3" }
+  ],
+  "params": {
+    "n2": { "price": 3.0, "schedule": "flat" }
+  }
+}
+
+
+

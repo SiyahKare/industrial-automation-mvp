@@ -1,8 +1,8 @@
 # 🏭 Endüstriyel Otomasyon Platformu (MVP)
 
 **OPC UA / Modbus sensörlerinden** veri toplayıp, **TimescaleDB** üzerinde uzun vadeli saklayan,
-**formül motoru** sayesinde maliyet/enerji hesapları çıkaran ve **Flutter panel** üzerinden
-(web + mobil) görselleştiren modern bir otomasyon yazılımı.
+**formül motoru** sayesinde maliyet/enerji hesapları çıkaran ve **Next.js tabanlı Web Editor** ile
+görselleştiren modern bir otomasyon yazılımı.
 
 ---
 
@@ -42,7 +42,7 @@ industrial-automation-mvp/
 ├─ infra/            # Mosquitto (MQTT) ayarları
 ├─ tools/            # Seeder (NodeId haritasından 1000 sample ekler)
 ├─ apps/
-│  ├─ web/           # Next.js + React Flow editor (yeni)
+│  ├─ web/           # Next.js + React Flow Editor (güncel)
 │  └─ mobile/        # ⏳ Expo/React Native (gelecek)
 ├─ packages/
 │  ├─ graph/         # Graph/Node/Edge tipleri (zod)
@@ -63,8 +63,9 @@ docker compose up -d --build
 Servisler:
 
 * **TimescaleDB** → `localhost:5433` (user/pass: tsdb/tsdb, db: tsdb)
-* **Grafana** → http://localhost:3000
+* **Grafana** → http://localhost:3000 (opsiyonel)
 * **FastAPI** → http://localhost:8000
+* **Web (Next.js)** → http://localhost:3001
 
 ### 2. Sensörleri ve örnek verileri ekle
 
@@ -95,11 +96,11 @@ npm run dev
 ```
 
 **Web Editor**: http://localhost:3001/editor
-- React Flow ile görsel graph editörü
-- Custom node'lar: Sensor, Constant, Output
-- Properties panel ile node düzenleme
-- Save/Activate pipeline özellikleri
-- Real-time data flow
+- React Flow ile görsel editor: Sensor / Constant / Output node’ları
+- Palette’ten sürükle-bırak, TagPicker ile çoklu sensör seçimi
+- Sağ panelde dinamik Parametre Paneli (NodeSpec)
+- Zaman serisi grafik (ECharts): auto-refresh, threshold, WS overlay
+- Toolbar: Delete selected, Clear, Run Pipeline
 
 ### 6. Flutter UI (eski, arşiv)
 
@@ -177,11 +178,7 @@ opcua:
 
 ## 🧭 Yol Haritası
 
-* [ ] OPC UA/Modbus canlı bağlantı (asyncua/pymodbus)
-* [ ] Formül motoru → DAG tabanlı tam operatör seti
-* [ ] Flutter panel → sürükle-bırak canvas editörü
-* [ ] Alarm ve bildirim modülü (e-mail, SMS, Telegram)
-* [ ] Karbon ayak izi ve ISO 50001 rapor modülleri
+Detaylı yol haritası için `roadmap.md` dosyasına bakınız.
 
 ---
 

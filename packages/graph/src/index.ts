@@ -43,3 +43,6 @@ export type Graph = z.infer<typeof Graph>;
 export function createEmptyGraph(): Graph {
   return { nodes: [], edges: [], version: 1 };
 }
+
+// Export nodespec definitions
+export * from './nodespec';
