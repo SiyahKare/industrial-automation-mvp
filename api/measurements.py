@@ -47,7 +47,10 @@ async def list_measurements(
     if tag:
         sql.append("AND s.tag = $3")
         params.append(tag)
-    sql.append("ORDER BY m.ts DESC LIMIT $4")
+        limit_placeholder = "$4"
+    else:
+        limit_placeholder = "$3"
+    sql.append(f"ORDER BY m.ts DESC LIMIT {limit_placeholder}")
     params.append(limit)
     q = " ".join(sql)
 

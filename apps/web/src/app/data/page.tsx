@@ -53,7 +53,10 @@ export default function DataPage() {
     setRefreshing(false);
   };
 
-  const formatValue = (value: number) => {
+  const formatValue = (value: number | null | undefined) => {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return 'N/A';
+    }
     if (Math.abs(value) >= 1000) {
       return (value / 1000).toFixed(1) + 'K';
     }
