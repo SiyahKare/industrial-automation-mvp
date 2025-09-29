@@ -77,8 +77,8 @@ export default function Palette() {
                 No sensors available
               </div>
             ) : (
-              <div className="grid gap-2 max-h-32 overflow-y-auto">
-                {sensorList.slice(0, 6).map((sensor: any) => (
+              <div className="grid gap-2 max-h-32 overflow-y-auto scrollbar-thin pr-1">
+                {sensorList.map((sensor: any) => (
                   <Button
                     key={sensor.tag}
                     variant="ghost"
@@ -92,11 +92,6 @@ export default function Palette() {
                     <span className="text-xs truncate">{sensor.tag}</span>
                   </Button>
                 ))}
-                {sensorList.length > 6 && (
-                  <div className="text-xs text-slate-400 text-center pt-1">
-                    +{sensorList.length - 6} more...
-                  </div>
-                )}
               </div>
             )}
           </CardContent>
