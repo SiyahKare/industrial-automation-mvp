@@ -14,7 +14,18 @@ import {
   GitBranch
 } from "lucide-react";
 
-export default function Home() {
+export default async function Home() {
+  const base = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+  let activeSensors = 0;
+  try {
+    const r = await fetch(`${base}/api/sensors`, { cache: "no-store" });
+    if (r.ok) {
+      const sensors = await r.json();
+      activeSensors = Array.isArray(sensors) ? sensors.length : 0;
+    }
+  } catch (e) {
+    activeSensors = 0;
+  }
   const features = [
     {
       icon: GitBranch,
@@ -43,7 +54,7 @@ export default function Home() {
   ];
 
   const stats = [
-    { label: "Active Sensors", value: "24", icon: Activity },
+    { label: "Active Sensors", value: String(activeSensors), icon: Activity },
     { label: "Data Points", value: "9K+", icon: Database },
     { label: "Uptime", value: "99.9%", icon: TrendingUp },
   ];
