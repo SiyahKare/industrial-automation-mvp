@@ -2,6 +2,7 @@
 import { Registry } from "@/lib/registry";
 import { useGraphStore } from "@/store/graph";
 import useSWR from "swr";
+import { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,38 +21,44 @@ export default function ParamPanel() {
   const spec = node ? (Registry as any)[nodeType] : undefined;
 
   const { data: sensorList } = useSWR("/api/proxy/sensors/list", fetcher);
+  // Hooks MUST be called unconditionally. Compute vals with a safe key.
+  const safeNodeKey = node?.id || "__no_node__";
+  const vals = (params as any)[safeNodeKey] || {};
 
-  if (!node) {
-    return (
-      <div className="p-6 text-center">
-        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Settings className="w-8 h-8 text-slate-400" />
-        </div>
-        <h3 className="text-sm font-medium text-slate-700 mb-2">No Node Selected</h3>
-        <p className="text-xs text-slate-500">
-          Click on a node in the canvas to view and edit its properties.
-        </p>
-      </div>
-    );
-  }
+  // Initialize defaults one-time per node to avoid render loops
+  const initedForNode = useRef<string | null>(null);
+  useEffect(() => {
+    if (!node || !spec) return;
+    if (initedForNode.current === node.id) return;
+    // For sensor nodes, set tag/unit if empty
+    if (spec.type === "sensor") {
+      const hasTag = vals.tag && String(vals.tag).length > 0;
+      if (!hasTag && sensorList?.length) {
+        const first = sensorList[0];
+        if (first?.tag) setParam(node.id, "tag", first.tag);
+        if (first?.unit) setParam(node.id, "unit", first.unit);
+      } else {
+        // Ensure unit default exists
+        const unitParam = spec.params?.find((p: any) => p.key === "unit");
+        const unitVal = vals.unit;
+        if ((unitVal === undefined || unitVal === "") && unitParam) {
+          const defUnit = unitParam.default ?? "kW";
+          setParam(node.id, "unit", defUnit);
+        }
+      }
+    } else {
+      // Non-sensor: ensure any defaults present
+      for (const p of spec.params || []) {
+        if (vals[p.key] === undefined && p.default !== undefined) {
+          setParam(node.id, p.key, p.default);
+        }
+      }
+    }
+    initedForNode.current = node.id;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node?.id, spec, sensorList]);
 
-  if (!spec) {
-    return (
-      <div className="p-6 text-center">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Info className="w-8 h-8 text-red-500" />
-        </div>
-        <h3 className="text-sm font-medium text-slate-700 mb-2">Unknown Node Type</h3>
-        <p className="text-xs text-slate-500">
-          This node type ({nodeType}) is not recognized.
-        </p>
-      </div>
-    );
-  }
-
-  const vals = (params as any)[node.id] || {};
-
-  const Field = (p: any) => {
+  const renderField = (p: any) => {
     const v = vals[p.key] ?? p.default ?? "";
     const onChange = (val: any) => setParam(node.id, p.key, val);
 
@@ -91,7 +98,7 @@ export default function ParamPanel() {
         );
       case "select":
         return (
-          <Select value={v} onValueChange={onChange}>
+          <Select value={v || undefined} onValueChange={onChange}>
             <SelectTrigger className="bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Select option..." />
             </SelectTrigger>
@@ -106,7 +113,13 @@ export default function ParamPanel() {
         );
       case "sensorTag":
         return (
-          <Select value={v} onValueChange={onChange}>
+          <Select value={v || undefined} onValueChange={(val) => {
+            onChange(val);
+            const match = sensorList?.find((s: any) => s.tag === val);
+            if (match && match.unit) {
+              setParam(node.id, "unit", match.unit);
+            }
+          }}>
             <SelectTrigger className="bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Select sensor..." />
             </SelectTrigger>
@@ -124,7 +137,7 @@ export default function ParamPanel() {
         );
       case "unit":
         return (
-          <Select value={v} onValueChange={onChange}>
+          <Select value={v || undefined} onValueChange={onChange}>
             <SelectTrigger className="bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Select unit..." />
             </SelectTrigger>
@@ -161,11 +174,40 @@ export default function ParamPanel() {
     }
   };
 
+  // After hooks, we can conditionally render fallback UIs
+  if (!node) {
+    return (
+      <div className="p-6 text-center">
+        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Settings className="w-8 h-8 text-slate-400" />
+        </div>
+        <h3 className="text-sm font-medium text-slate-700 mb-2">No Node Selected</h3>
+        <p className="text-xs text-slate-500">
+          Click on a node in the canvas to view and edit its properties.
+        </p>
+      </div>
+    );
+  }
+
+  if (!spec) {
+    return (
+      <div className="p-6 text-center">
+        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Info className="w-8 h-8 text-red-500" />
+        </div>
+        <h3 className="text-sm font-medium text-slate-700 mb-2">Unknown Node Type</h3>
+        <p className="text-xs text-slate-500">
+          This node type ({nodeType}) is not recognized.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Node Info */}
       <Card>
-        <CardHeader className="pb-3">
+          <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
               nodeType === 'sensor' ? 'bg-emerald-500' :
@@ -173,7 +215,7 @@ export default function ParamPanel() {
             }`}>
               <Settings className="w-4 h-4 text-white" />
             </div>
-            Node Properties
+              Node Info
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -217,7 +259,7 @@ export default function ParamPanel() {
                     </Badge>
                   )}
                 </div>
-                <Field {...param} />
+                {renderField(param)}
                 {param.placeholder && (
                   <p className="text-xs text-slate-500">{param.placeholder}</p>
                 )}

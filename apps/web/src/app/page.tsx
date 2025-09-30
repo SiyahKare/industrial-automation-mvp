@@ -47,7 +47,7 @@ export default async function Home() {
       icon: Settings,
       title: "Sensor Management",
       description: "Configure and manage industrial sensors",
-      href: "/sensors/new",
+      href: "/sensors",
       color: "bg-purple-500",
       badge: "Config"
     }

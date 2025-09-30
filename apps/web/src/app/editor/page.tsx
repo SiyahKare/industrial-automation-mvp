@@ -55,6 +55,29 @@ const initialEdges: Edge[] = [
   { id: "e2", source: "C1", target: "M1", animated: true, style: { stroke: '#10b981', strokeWidth: 2 } },
 ];
 
+function ExecutionPanels() {
+  const [execId, setExecId] = React.useState<string>("");
+  React.useEffect(() => {
+    const read = () => {
+      const hash = typeof window !== 'undefined' ? window.location.hash : '';
+      const m = hash.match(/exec=([^&]+)/);
+      setExecId(m?.[1] || "");
+    };
+    read();
+    window.addEventListener('hashchange', read);
+    return () => window.removeEventListener('hashchange', read);
+  }, []);
+  if (!execId) {
+    return <div className="text-xs text-slate-500">Run sonrası özet ve loglar burada görünecek.</div>;
+  }
+  return (
+    <>
+      <ExecutionSummary executionId={execId} />
+      <ExecutionLogs executionId={execId} />
+    </>
+  );
+}
+
 function EditorComponent() {
   const [tags, setTags] = useState<string[]>(['Area1/Flow_01', 'Area1/Temp_01']);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
@@ -410,21 +433,7 @@ function EditorComponent() {
                 />
               </div>
               {/* Execution Summary + Logs */}
-              <div className="mt-4 space-y-3">
-                {typeof window !== 'undefined' && (() => {
-                  const hash = window.location.hash || '';
-                  const m = hash.match(/exec=([^&]+)/);
-                  const id = m?.[1] || '';
-                  return id ? (
-                    <>
-                      <ExecutionSummary executionId={id} />
-                      <ExecutionLogs executionId={id} />
-                    </>
-                  ) : (
-                    <div className="text-xs text-slate-500">Run sonrası özet ve loglar burada görünecek.</div>
-                  );
-                })()}
-              </div>
+              <ExecutionPanels />
             </div>
           </div>
         </div>
@@ -446,22 +455,7 @@ function EditorComponent() {
           </aside>
         )}
 
-        {/* Mobile Right Panel */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="lg:hidden fixed top-20 right-4 z-50">
-              <Settings className="w-4 h-4" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-80">
-            <SheetHeader>
-              <SheetTitle>Node Properties</SheetTitle>
-            </SheetHeader>
-            <div className="mt-6">
-              <ParamPanel />
-            </div>
-          </SheetContent>
-        </Sheet>
+        {/* Mobile Right Panel removed to avoid double mounting ParamPanel */}
       </div>
     </div>
   );

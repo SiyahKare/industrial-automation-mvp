@@ -31,22 +31,37 @@ export default function NewSensor() {
   return (
     <form onSubmit={submit} className="p-4 max-w-lg space-y-3">
       <h1 className="text-xl font-semibold">Yeni Sensör</h1>
-      <input value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Plant/Area/Equip/Signal"
-             className="border p-2 w-full" required />
-      <input value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="kW, m3/h, bar..."
-             className="border p-2 w-full" required />
-      <select value={type} onChange={(e) => setType(e.target.value as any)} className="border p-2 w-full">
+      <div>
+        <label className="block text-sm text-slate-600 mb-1">Tag</label>
+        <input value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Plant/Area/Equip/Signal"
+               className="border p-2 w-full" required />
+      </div>
+      <div>
+        <label className="block text-sm text-slate-600 mb-1">Unit</label>
+        <input value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="kW, m3/h, bar..."
+               className="border p-2 w-full" required />
+      </div>
+      <div>
+        <label className="block text-sm text-slate-600 mb-1">Source Type</label>
+        <select value={type} onChange={(e) => setType(e.target.value as any)} className="border p-2 w-full">
         <option value="opcua">OPC UA</option>
         <option value="modbus">Modbus</option>
         <option value="sim">Sim</option>
-      </select>
+        </select>
+      </div>
       {type === "opcua" && (
-        <input value={nodeId} onChange={(e) => setNodeId(e.target.value)} placeholder="ns=2;s=Device.Tag"
-               className="border p-2 w-full" />
+        <div>
+          <label className="block text-sm text-slate-600 mb-1">OPC UA NodeId</label>
+          <input value={nodeId} onChange={(e) => setNodeId(e.target.value)} placeholder="ns=2;s=Device.Tag"
+                 className="border p-2 w-full" />
+        </div>
       )}
       {type === "modbus" && (
-        <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="tcp://host:port:unit:reg"
-               className="border p-2 w-full" />
+        <div>
+          <label className="block text-sm text-slate-600 mb-1">Modbus Address</label>
+          <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="tcp://host:port:unit:reg"
+                 className="border p-2 w-full" />
+        </div>
       )}
       <button disabled={busy} className="bg-black text-white px-4 py-2 rounded">{busy ? "Kaydediliyor..." : "Kaydet"}</button>
     </form>

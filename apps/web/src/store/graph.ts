@@ -40,7 +40,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     else if (type === 'constant') nodeType = 'constant';
     else if (type === 'out' || type === 'output') nodeType = 'output';
     
-    const label = type.toUpperCase();
+    const label = type === 'sensor' ? 'Power Sensor' : type.toUpperCase();
     const node: Node = {
       id, 
       type: nodeType, 
@@ -50,7 +50,12 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       draggable: true,
       connectable: true
     };
-    set({ nodes: [...get().nodes, node] });
+    // Initialize default params for sensor
+    const nextParams = { ...get().params } as any;
+    if (type === 'sensor') {
+      nextParams[id] = { tag: '', unit: 'kW' };
+    }
+    set({ nodes: [...get().nodes, node], params: nextParams });
   },
 
   clear: () => set({ nodes: [], edges: [], params: {}, selectedNodeId: undefined }),
